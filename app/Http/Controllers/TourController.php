@@ -8,10 +8,45 @@ use Illuminate\Http\Request;
 class TourController extends Controller
 {
     //
-    public function index()
+    function __construct()
     {
-        $tour  = TourManagement::all();
-        return view('tours.index', compact('tour'));
+        $this->middleware('permission:tour.viewer|tour.create|tour.edit|tour.delete', ['only' => ['index', 'show']]);
+        $this->middleware('permission:tour.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:tour.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:our.delete', ['only' => ['destroy']]);
+    }
+    public function index(Request $request)
+    {
+        $q = $request->input('q');
+        $status = $request->input('status');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+
+        $tour = TourManagement::with('bookings')
+            //search
+            ->when($q, function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('id', 'Like', "%{$q}%")
+                        ->orWhere("name", 'Like', "%{$q}%")
+                        ->orWhere("description", 'Like', "%{$q}%")
+                        ->orWhere("price", 'Like', "%{$q}%")
+                        ->orWhere("start_date", 'Like', "%{$q}%")
+                        ->orWhere("end_date", 'Like', "%{$q}%")
+                        ->orWhere("status", 'Like', "%{$q}%")
+                        ->orWhereHas('bookings', fn($t) => $t->where('name', 'LIKE', "%{$q}%"));
+                });
+            })
+            //filter by status
+            ->when($status, fn($query) => $query->where('status', $status))
+            //filter by min price
+            ->when($minPrice, fn($query) => $query->where('price', $minPrice))
+            //filter by max price
+            ->when($maxPrice, fn($query) => $query->where('price', $maxPrice))
+            ->latest()
+            ->paginate(5);
+
+        // $tour  = TourManagement::all();
+        return view('tours.index', compact('tour', 'q', 'status', 'minPrice', 'maxPrice'));
     }
     public function create()
     {

@@ -6,11 +6,14 @@
     <title>Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    
+
     {{-- ================================================
          FONTS — loads Google font + Font Awesome icons
          Must load before CSS so icons render correctly
     ================================================ --}}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <script src="{{ asset('assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
         WebFont.load({
@@ -36,9 +39,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}">
-    
+
     <style>
-        tr:target td {
+        /* tr:target td {
             background-color: #d1ecf1 !important;
             border-top: 2px solid #007bff !important;
             border-bottom: 2px solid #007bff !important;
@@ -47,12 +50,34 @@
 
         tr:target td:first-child {
             border-left: 5px solid #007bff !important;
+        } */
+
+
+
+        .nav-item.active {
+            background: #1e293b;
+            border-left: 4px solid #3b82f6;
+            border-radius: 6px;
+        }
+
+        .nav-item.active a {
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .nav-item.active i {
+            color: #3b82f6;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
         }
     </style>
+
 </head>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     {{-- ================================================
          WRAPPER — wraps sidebar + main panel together
@@ -97,9 +122,9 @@
                  FOOTER — bottom of every page
                  stays the same across all pages
             ======================================== --}}
-            <footer class="footer">
-                <div class="container-fluid text-center">
-                    © 2026 Tour Booking System
+            <footer class="bg-dark text-white py-3 mt-auto">
+                <div class="container text-center">
+                    <p class="mb-0">&copy; 2026 EO Tour. All rights reserved.</p>
                 </div>
             </footer>
 

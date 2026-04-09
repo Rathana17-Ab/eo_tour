@@ -23,7 +23,8 @@ class SearchController extends Controller
             ->orWhere('name', 'LIKE', "%{$q}%")
             ->orWhere('description', 'LIKE', "%{$q}%")
             ->orWhere('price', 'LIKE', "%{$q}%")
-            ->latest()->limit(10)->get();
+            ->latest()
+            ->paginate(10, ['*'], 'tour_page');
 
         // Search bookings by columns directly (NOT whereHas for columns)
         $bookings = Booking::with(['tour', 'user'])
@@ -31,9 +32,9 @@ class SearchController extends Controller
             ->orWhere('customer_name', 'LIKE', "%{$q}%")
             ->orWhere('customer_email', 'LIKE', "%{$q}%")
             ->orWhere('people_count', '=', $q) // <--- ADD THIS LINE
-            ->orWhereHas('user', fn($query) => $query->where('name', 'LIKE', "%{$q}%"))
             ->orWhereHas('tour', fn($query) => $query->where('name', 'LIKE', "%{$q}%"))
-            ->latest()->limit(10)->get();
+            ->latest()
+            ->paginate(10, ['*'], 'booking_page');
 
         // Search Users by Name, Email, or Role
         $users = User::with('roles')

@@ -23,11 +23,10 @@
                         @enderror
                     </div>
 
-                    <div class="d-flex justify-content-center gap-2 border-top pt-4">
-                        <button type="submit" class="btn btn-primary px-5">
-                            <i class="fas fa-save me-1"></i> Save Permission
+                  <button type="submit" class="btn btn-primary px-5">
+                            <i class="fas fa-save me-1"></i> Save 
                         </button>
-                    </div>
+                        <a class="btn btn-secondary"href="{{ route('permissions.index') }}">Cancel</a>
                 </form>
             </div>
         </div>

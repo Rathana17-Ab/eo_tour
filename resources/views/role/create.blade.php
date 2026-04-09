@@ -24,19 +24,18 @@
                                 @enderror
                                 <small class="text-muted">Give the role a unique name.</small>
                             </div>
-                            @foreach ($roles as $value)
-                                <div class="col-md-4 mb-2"> <!-- 2 items per row -->
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox"
-                                            name="permission[{{ $value->id }}]" value="{{ $value->id }}"
-                                            id="permission{{ $value->id }}">
+                          @foreach ($permission as $value)
+                            <div class="col-md-4 mb-2"> <!-- 2 items per row -->
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="permission[{{ $value->id }}]"
+                                        value="{{ $value->id }}" id="permission{{ $value->id }}">
 
-                                        <label class="form-check-label" for="permission{{ $value->id }}">
-                                            {{ $value->name }}
-                                        </label>
-                                    </div>
+                                    <label class="form-check-label" for="permission{{ $value->id }}">
+                                        {{ $value->name }}
+                                    </label>
                                 </div>
-                            @endforeach
+                            </div>
+                        @endforeach
                         </div>
                     </div>
 

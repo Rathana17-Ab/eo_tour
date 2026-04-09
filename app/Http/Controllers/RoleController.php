@@ -10,50 +10,90 @@ use Spatie\Permission\Models\RolePermission;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // ✅ $roles = Role list (មិនមែន $q)
         $roles = Role::with('permissions')->get();
-        return view('role.index', compact('roles'));
+
+        // ✅ $q = search query ពី URL
+        $q = $request->input('q');
+
+        // ✅ Query Role ត្រឹមត្រូវ — មិនប្រើ RoleManagement
+        $index = Role::with('permissions')
+            ->when($q, function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('id', 'LIKE', "%{$q}%")
+                        ->orWhere('name', 'LIKE', "%{$q}%");
+                });
+            })
+            ->latest()
+            ->paginate(5);
+
+        return view('role.index', compact('roles', 'index', 'q'));
     }
+
 
     public function create()
     {
-        $roles = Permission::all();
-        return view('role.create', compact('roles'));
+        $permission = Permission::all();
+        return view('role.create', compact('permission'));
     }
-
     public function store(Request $request)
     {
-        
+        $this->validate($request, [
+            'name' => 'required|unique:roles,name',
+            'permission' => 'nullable|array',
+        ]);
         $role = Role::create(['name' => $request->input('name')]);
         $permissionId = $request->input('permission')
             ? array_map(fn($value) => (int)$value, $request->input('permission'))
             : [];
         $role->syncPermissions($permissionId);
-
-
         // Gate:befo
         return redirect()->route('role.index')
             ->with('success', "Role Created Successfully");
     }
+    // public function store(Request $request)
+    // {
+
+    //     $role = Role::create(['name' => $request->input('name')]);
+    //     $permissionId = $request->input('permission')
+    //         ? array_map(fn($value) => (int)$value, $request->input('permission')): [];
+    //     $role->syncPermissions($permissionId);
+
+
+    //     // Gate:befo
+    //     return redirect()->route('role.index')
+    //         ->with('success', "Role Created Successfully");
+    // }
 
     public function edit($id)
     {
-        // $user = \App\Models\User::findOrFail($id);
-        // $roles = \Spatie\Permission\Models\Role::all();
-        $roles = Role::findOrFail($id);
-        return view('role.edit', compact('roles')); // បញ្ជូនទាំង user និង roles
-    }
-
-    public function update(Request $request, string $id)
-    {
         $role = Role::findOrFail($id);
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('roles')->ignore($role->id)]
+
+
+        $permission = Permission::all();
+        return view('role.edit', compact('role', 'permission'));
+    }
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'permission' => 'nullable|array',
         ]);
 
-        $role->update(['name' => $request->name]);
-        return redirect()->route('role.index')->with('success', 'Role updated successfully');
+        $role = Role::findOrFail($id);
+        $role->name = $request->input('name');
+        $role->save();
+
+        $permissionsId = $request->input('permission')
+            ? array_map(fn($value) => (int)$value, $request->input('permission'))
+            : [];
+
+        $role->syncPermissions($permissionsId);
+
+        return redirect()->route('role.index')
+            ->with('success', 'Role updated successfully');
     }
 
     public function destroy(string $id)

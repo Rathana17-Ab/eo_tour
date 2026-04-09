@@ -14,10 +14,24 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view("users.index", compact("users"));
+        $search = $request->input('search');
+
+        $users = User::with('roles')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($sub) use ($search) { // ✅ wrap ក្នុង where()
+                    $sub->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhereHas('roles', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(10); // ✅ ផ្លាស់ get() ទៅ paginate()
+
+        return view('users.index', compact('users', 'search'));
     }
 
     /**
@@ -67,7 +81,7 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::findOrFail($id);
-        return view("users.show", compact("user"));
+        return view("users.index", compact("user"));
     }
 
     /**

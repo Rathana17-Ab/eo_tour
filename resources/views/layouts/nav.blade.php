@@ -46,37 +46,27 @@
                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                     <i class="fa fa-user-circle me-1"></i>
-                    {{ Auth::user()->name ?? ''}}
+                    {{ Auth::user()->name ?? 'Guest' }}
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-
-                    {{-- Profile --}}
-                    {{-- <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                    {{-- Optional: Profile Link --}}
+                    <a class="dropdown-item" href="#">
                         <i class="fa fa-user me-2"></i> {{ __('Profile') }}
-                    </a> --}}
+                    </a>
 
                     <div class="dropdown-divider"></div>
 
-                    {{-- Logout --}}
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    {{-- Logout Link --}}
+                    <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fa fa-sign-out-alt me-2"></i> {{ __('Logout') }}
+                    </a>
 
-                        <a class="dropdown-item text-danger" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                 document.getElementById('logout-form').submit();">
-                            <i class="fa fa-sign-out me-2"></i> Logout
-                        </a>
-
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-
-                    </div>
-
+                    {{-- Hidden Logout Form --}}
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
-
                 </div>
             </li>
 

@@ -23,7 +23,7 @@
                                     <td>{{ $tour->name }}</td>
                                     <td>{{ $tour->destination }}</td>
                                     <td><a href="{{ route('tour.index') }}#tour-{{ $tour->id }}"
-                                        class="btn btn-sm btn-primary">View</a></td>
+                                            class="btn btn-sm btn-primary">View</a></td>
                                     </td>
                                 </tr>
                             @endforeach
@@ -110,5 +110,9 @@
                 No results found for <strong>{{ $q }}</strong>.
             </div>
         @endif
+
+        <div class="mt-4">
+            {{ $tours->links() }}
+        </div>
     </div>
 @endsection
